@@ -1,0 +1,253 @@
+title PuzzleScript Test
+author Sefan
+(homepage www.puzzlescript.net)
+
+========
+OBJECTS
+========
+
+Background 
+black  
+
+Wall
+black
+
+Ground 
+GREEN lightgreen
+00000
+01000
+00010
+00000
+00000
+
+Gravity
+red lightred
+00000
+01000
+00010
+00000
+00000
+
+Target 
+DarkBlue white
+01110
+10101
+11011
+10101
+01110
+
+Ice 
+lightblue white
+00100
+10000
+00010
+01000
+00001
+
+Player 
+Black
+.000.
+.000.
+00000
+.000.
+.0.0.
+
+IceCrate 
+lightblue darkblue
+11111
+10001
+10001
+10001
+11111
+
+CrateOnIce
+darkblue lightblue
+11111
+10001
+10101
+10001
+11111
+
+GroundCrate 
+darkgreen Orange 
+11111
+10001
+10001
+10001
+11111
+
+CrateOnGround
+Orange Green darkgreen
+11111
+10001
+10201
+10001
+11111
+
+GravityCrate
+darkred
+
+CreteOnGravity
+red lightred
+00000
+01000
+00010
+00000
+00000
+
+
+ContinueUp
+transparent
+
+ContinueLeft
+transparent
+
+ContinueRight
+transparent
+
+ContinueDown
+transparent
+
+=======
+LEGEND
+=======
+
+- = Background
+. = Ground
+# = Ice
+W = Wall
+G = Gravity
+P = Player and Ground
+* = GroundCrate and Ground
+: = IceCrate and Ice
+; = GravityCrate and Gravity
+X = CrateOnGround and Ground
+O = Target and Ground
+L = Target and Ice
+K = Target and Gravity
+@ = GroundCrate and Target and Ground
+Q = Player and Ice
+, = Player and Ground
+Creat = GroundCrate or IceCrate or GravityCrate
+Object = GroundCrate or IceCrate or GravityCrate or Player
+
+
+=======
+SOUNDS
+=======
+
+================
+COLLISIONLAYERS
+================
+
+Background
+Ice, Ground, Wall, Gravity
+ContinueUp, ContinueLeft, ContinueRight, ContinueDown
+Target, CrateOnGround, CrateOnIce, CreteOnGravity
+Player, GroundCrate, IceCrate, GravityCrate
+
+======
+RULES     
+======     
+(Player collision)
+[ > Player | Wall] -> [Player | Wall]
+([ > Player Ground | Ice] -> [Player Ground | Ice]
+[ > Player Ice | Ground] -> [Player Ice | Ground])
+([ > Player Ground | GravityCrate Gravity | No GravityCrate Gravity] -> [Ground | Player Gravity | > GravityCrate Gravity]
+[ > Player Ground | IceCrate Ice | No IceCrate Ice] -> [Ground | Player Ice | > IceCrate Ice]
+[ > Player Ice | GravityCrate Gravity | No GravityCrate Gravity] -> [Ice | Player Gravity | > GravityCrate Gravity]
+[ > Player Ice | GroundCrate Ground | No GroundCrate Ground] -> [Ice | Player Ground | GroundCrate Ground]
+[ > Player Gravity | IceCrate Ice | No IceCrate Ice] -> [Gravity | Player Ice | > IceCrate Ice]
+[ > Player Gravity | GroundCrate Ground | No GroundCrate Ground] -> [Gravity | Player Ground | GroundCrate Ground]
+
+
+[ > Player Ground | No IceCrate Ice] -> [Ground | Player Ice]
+[ > Player Ice | No GroundCrate Ground] -> [Ice | Player Ground])
+
+(Player push GroundCrate)
+[ > Player | GroundCrate] -> [> Player | > GroundCrate]
+[ > GroundCrate | no Object Ice ] -> [ Ground | CrateOnGround Ground]
+[ > GroundCrate | no Object Gravity ] -> [ Ground | CrateOnGround Ground]
+[ > GroundCrate | Wall ] -> [ GroundCrate | Wall]
+
+(Player push IceCrate)
+[ > Player | IceCrate] -> [> Player | > IceCrate]
+[ > IceCrate | no Object Ground ] -> [ Ice | CrateOnIce Ice]
+[ > IceCrate | no Object Gravity ] -> [ Ice | CrateOnIce Ice]
+[ > IceCrate | Wall ] -> [ IceCrate | Wall]
+
+(Player push GravityCrate)
+[ > Player | GravityCrate] -> [> Player | > GravityCrate]
+[ > GravityCrate | no Object Ground ] -> [ Gravity | CreteOnGravity Gravity]
+[ > GravityCrate | no Object Ice ] -> [ Gravity | CreteOnGravity Gravity]
+[ > GravityCrate | Wall ] -> [ GravityCrate | Wall]
+random down [ Player Gravity | No Object Gravity ] -> [ Gravity | Player Gravity] again
+random down [ GravityCrate Gravity | no Object Gravity ] -> [ Gravity | GravityCrate Gravity] again
+
+(Player slide on Wall)
+Up [ ContinueUp | Player Ice | Ice] -> [ | > Player Ice | Ice]
+Left [ ContinueLeft | Player Ice | Ice] -> [ | > Player Ice | Ice]
+Right [ ContinueRight | Player Ice | Ice] -> [ | > Player Ice | Ice]
+Down [ ContinueDown | Player Ice | Ice] -> [ | > Player Ice | Ice]
+
+(IceCrate slide on Wall)
+Up [ ContinueUp | IceCrate Ice | Ice] -> [ | > IceCrate Ice | Ice]
+Left [ ContinueLeft | IceCrate Ice | Ice] -> [ | > IceCrate Ice | Ice]
+Right [ ContinueRight | IceCrate Ice | Ice] -> [ | > IceCrate Ice | Ice]
+Down [ ContinueDown | IceCrate Ice | Ice] -> [ | > IceCrate Ice | Ice]
+
+[ ContinueUp ] -> [ ]
+[ ContinueLeft ] -> [ ]
+[ ContinueRight ] -> [ ]
+[ ContinueDown ] -> [ ]
+
+[ up Player ] -> [ up Player ContinueUp ] again
+[ left Player ] -> [ left Player ContinueLeft ] again
+[ right Player ] -> [ right Player ContinueRight ] again
+[ down Player ] -> [ down Player ContinueDown ] again
+
+[ up IceCrate ] -> [ up IceCrate ContinueUp ] again
+[ left IceCrate ] -> [ left IceCrate ContinueLeft ] again
+[ right IceCrate ] -> [ right IceCrate ContinueRight ] again
+[ down IceCrate ] -> [ down IceCrate ContinueDown ] again
+
+==============
+WINCONDITIONS
+==============
+
+All Target on Creat
+
+=======     
+LEVELS
+=======
+.....
+P.*.O
+.....
+
+.......
+P##:##.
+.....#.
+.L####.
+.......
+
+####.....
+#:##..*..
+##:#.....
+#########
+.....####
+..P..##L#
+.....####
+
+..gggg.o
+p.gggg..
+..gggg.*
+ggg;;ggg
+gg....gg
+
+#lggoggl#
+##g;.;g##
+##gg.gg##
+##g*.*g##
+##gg*gg##
+#:gg.gg:#
+##gkpkg##
